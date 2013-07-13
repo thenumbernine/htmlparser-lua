@@ -32,7 +32,7 @@ else
 	require 'socket'
 	local http = require 'socket.http'
 
-	local mainpage = 'http://christopheremoore.net'
+	local mainpage = 'http://christopheremoore.net/home.lua'
 	do
 		local filename = 'cachedpage.html'
 		local file = io.open(filename, 'r')

@@ -1,1 +1,2 @@
 html parser in lua
+depends on lua-ext: http://github.com/thenumbernine/lua-ext

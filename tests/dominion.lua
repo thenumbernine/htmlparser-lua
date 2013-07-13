@@ -2,29 +2,17 @@
 require 'ext'
 require 'htmlparser.htmlparser'
 require 'socket'
-local http = require 'socket.http'
 require 'htmlparser.common'
+require 'htmlparser.xpath'
+local http = require 'socket.http'
 local json = require 'dkjson'
-
-local function flattenText(n)
-	if type(n) == 'string' then return n end
-	if n.tag == 'br' then return '.  ' end
-	if not n.child then return '' end
-	return table.map(n.child, function(ch) return flattenText(ch) end):concat()
-end
 
 local function processPage(page)
 	local cards = table()
 	
 	local tree = htmlparser.new(page):parse()
-	local html = findtag(tree, 'html')
-	local body = findchild(html, 'body')
-	local divWrapper = findchild(body, 'div', {id='wrapper'})
-	local divMain = findchild(divWrapper, 'div', {id='main'})
-	local divContainer = findchild(divMain, 'div', {id='container'})
-	local divContent = findchild(divContainer, 'div', {id='content'})
-	local divPost111 = findchild(divContent, 'div')	--, {id='post-111'})
-	local divEntryContent = findchild(divPost111, 'div', {class='entry-content'})
+	local divEntryContent = unpack(htmlparser.xpath(tree, '//@class=entry-content'))
+	assert(divEntryContent)
 	for _,cardTable in ipairs(findchilds(divEntryContent, 'table')) do
 		local cardTBody = findchild(cardTable, 'tbody')
 		for _,cardTR in ipairs(findchilds(cardTBody, 'tr')) do
@@ -68,4 +56,3 @@ for _,setinfo in ipairs(setinfos) do
 end
 
 print(json.encode(sets, {indent=true}))
-

@@ -75,4 +75,10 @@ function findattr(node, name)
 	end
 end
 
+function flattenText(n)
+	if type(n) == 'string' then return n end
+	if n.tag == 'br' then return '.  ' end
+	if not n.child then return '' end
+	return table.map(n.child, function(ch) return flattenText(ch) end):concat()
+end
 

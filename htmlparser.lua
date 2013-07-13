@@ -49,6 +49,10 @@ these nodes can be of either type objects:
 			child: if type is 'tag' then this holds an indexed array of the child nodes of this node
 				if a html node has not child then this will be nil
 
+TODO
+- give each node a metatable
+- put common.lua functions into that metatable
+- merge .child into the objects themselves
 --]]
 
 module('htmlparser', package.seeall)
@@ -547,4 +551,3 @@ end
 function parse(data)
 	return new(data):parse()
 end
-

@@ -9,7 +9,10 @@ local json = require 'dkjson'
 
 local function processPage(page)
 	local cards = table()
-	
+
+	page = page:gsub(string.char(0xe2, 0x97, 0x89), 'P')
+	page = page:gsub(string.char(0xc2, 0xa0, 0x20), ' ')
+
 	local tree = htmlparser.new(page):parse()
 	local divEntryContent = unpack(htmlparser.xpath(tree, '//@class=entry-content'))
 	assert(divEntryContent)
@@ -23,7 +26,34 @@ local function processPage(page)
 			local cost = flattenText(cardTDs[3])
 			local text = flattenText(cardTDs[4]):gsub([[&#8211;]], '-'):gsub([[&#8217;]], "'"):gsub([[&#8212;]], ' -- '):gsub([[&#8230]], ':')
 
-			cards:insert{name=title, type=cardtype, cost=cost, text=text}
+			--[[
+			removing cards that can't be chosen
+			--]]
+			if title == 'Ruins' then
+			elseif cardtype:sub(-8) == ' - Ruins' then
+			elseif title == 'Shelters' then
+			elseif cardtype:sub(-10) == ' - Shelter' then
+			elseif cardtype:sub(-9) == ' - Knight' then
+			elseif title == 'Knights' then
+				cards:insert{
+					name=title, 
+					type='Action - Attack - Knight', 
+					cost='$5',
+					text=text,
+				}
+			elseif title == 'Madman' then
+			elseif title == 'Mercenary' then
+			elseif title == 'Spoils' then
+			elseif title == 'Platinum' then
+			elseif title == 'Colony' then
+			else
+				cards:insert{
+					name=title, 
+					type=cardtype, 
+					cost=cost, 
+					text=text,
+				}
+			end
 		end
 	end
 	return cards
@@ -41,6 +71,7 @@ local setinfos = {
 	{name='hinterlands', url='http://dominionstrategy.com/card-lists/hinterlands-card-list/'},
 	{name='dark-ages', url='http://dominionstrategy.com/card-lists/dark-ages-card-list/'},
 	{name='promotional', url='http://dominionstrategy.com/card-lists/promotional-cards/'},
+	{name='guilds', url='http://dominionstrategy.com/card-lists/guilds-card-list/'},
 }
 local sets = table()
 for _,setinfo in ipairs(setinfos) do

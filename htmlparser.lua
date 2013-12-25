@@ -59,6 +59,8 @@ module('htmlparser', package.seeall)
 
 Parser = {}
 Parser.__index = Parser
+-- breaking atm ...
+Parser.tagCaseInsensitive = true 
 
 function new(page)
 	local p = {
@@ -265,6 +267,7 @@ function Parser:tagstart()
 
 	self:spaces()
 	t.tag = self:name()
+	if self.tagCaseInsensitive then t.tag = t.tag:lower() end
 
 	while true do
 		self:spaces()
@@ -288,12 +291,15 @@ function Parser:tagstart()
 		end
 		--print('  reading attr name '..attr.name)
 		self:spaces()
-		self:mustbe('=')
-		self:spaces()
-		-- this is fickle
-		-- it is either a non-quoted chars-til-whitespace (or >)
-		-- or a single-quoted or a double-quoted string
-		attr.value = self:attrvalue()
+		if not self:canbe('=') then
+			attr.value = true
+		else
+			self:spaces()
+			-- this is fickle
+			-- it is either a non-quoted chars-til-whitespace (or >)
+			-- or a single-quoted or a double-quoted string
+			attr.value = self:attrvalue()
+		end
 		--print('  reading attr value '..attr.value)
 		if not t.attrs then t.attrs = {} end
 		table.insert(t.attrs, attr)
@@ -341,7 +347,7 @@ function Parser:tagofsinglestring(tagname)
 		end};
 		{reg='<', new=states.slash};
 		{reg='>', new=function()
-			if foundname == tagname then
+			if foundname:lower() == tagname:lower() then
 				return nil, s:sub(1,closingindex)
 			end
 			return states.openbrace
@@ -351,7 +357,7 @@ function Parser:tagofsinglestring(tagname)
 	}
 	states.closespace.edges = {
 		{reg='>', new=function()
-			if foundname == tagname then
+			if foundname:lower() == tagname:lower() then
 				return nil, s:sub(1,closingindex)
 			end
 			return states.openbrace

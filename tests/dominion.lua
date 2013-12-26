@@ -46,13 +46,20 @@ local function processPage(page)
 			elseif title == 'Spoils' then
 			elseif title == 'Platinum' then
 			elseif title == 'Colony' then
+			elseif title == 'Potion' then
 			else
-				cards:insert{
-					name=title, 
-					type=cardtype, 
-					cost=cost, 
-					text=text,
-				}
+				if title ~= '' 
+				and cardtype ~= '' 
+				and cost ~= '' 
+				and text ~= '' 
+				then
+					cards:insert{
+						name=title, 
+						type=cardtype, 
+						cost=cost, 
+						text=text,
+					}
+				end
 			end
 		end
 	end
@@ -86,4 +93,4 @@ for _,setinfo in ipairs(setinfos) do
 	}
 end
 
-print(json.encode(sets, {indent=true}))
+print('decks = '..json.encode(sets, {indent=true}))

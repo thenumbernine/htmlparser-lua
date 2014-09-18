@@ -135,12 +135,13 @@ end
 
 Parser.namepattern = '[%w_:%-]'
 function Parser:name()
-	self:mustbe(self.namepattern)
-	local n = self.lasttoken
-	while self:canbe(self.namepattern) do
-		n = n .. self.lasttoken
+	if self:canbe(self.namepattern) then
+		local n = self.lasttoken
+		while self:canbe(self.namepattern) do
+			n = n .. self.lasttoken
+		end
+		return n
 	end
-	return n
 end
 
 -- TODO - this goes slow
@@ -287,22 +288,25 @@ function Parser:tagstart()
 			name = self:name();
 		}
 		if not attr.name then
-			break
-		end
-		--print('  reading attr name '..attr.name)
-		self:spaces()
-		if not self:canbe('=') then
-			attr.value = true
+			-- error reading name ... trace to the next equals sign, then back to the next key?
+			-- or just bail on this whole tag, trace to the next / or >, and let the tag close
+			while self:canbe('[^>/]') do end
 		else
+			--print('  reading attr name '..attr.name)
 			self:spaces()
-			-- this is fickle
-			-- it is either a non-quoted chars-til-whitespace (or >)
-			-- or a single-quoted or a double-quoted string
-			attr.value = self:attrvalue()
+			if not self:canbe('=') then
+				attr.value = true
+			else
+				self:spaces()
+				-- this is fickle
+				-- it is either a non-quoted chars-til-whitespace (or >)
+				-- or a single-quoted or a double-quoted string
+				attr.value = self:attrvalue()
+			end
+			--print('  reading attr value '..attr.value)
+			if not t.attrs then t.attrs = {} end
+			table.insert(t.attrs, attr)
 		end
-		--print('  reading attr value '..attr.value)
-		if not t.attrs then t.attrs = {} end
-		table.insert(t.attrs, attr)
 	end
 	
 	self:parseerror("shouldn't get this far")

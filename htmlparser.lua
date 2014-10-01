@@ -55,7 +55,7 @@ TODO
 - merge .child into the objects themselves
 --]]
 
-module('htmlparser', package.seeall)
+module(..., package.seeall)
 
 Parser = {}
 Parser.__index = Parser

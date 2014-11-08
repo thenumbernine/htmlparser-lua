@@ -99,13 +99,14 @@ function Parser:nexttoken()
 end
 
 function Parser:parseerror(msg)
-	error(self.thisrow..':'..self.thiscol..':'..(msg or ''))
+	error('line '..self.thisrow..' col '..self.thiscol..': '..(msg or ''))
 end
 
-function Parser:parseassert(test, msg)
+function Parser:parseassert(test, msg, ...)
 	if not test then
 		self:parseerror(msg)
 	end
+	return test, msg, ...
 end
 
 function Parser:parseassertmatch(a,b,msg)
@@ -174,8 +175,8 @@ function Parser:comment()
 	elseif self:canbe('%-') then
 		self:mustbe('%-')
 		return self:strtil('%-%->', 'comment')
-	elseif self:canbe('D') then
-		self:mustbe('O','C','T','Y','P','E')	-- there's probably a better way to optionally read a name...
+	elseif self:canbe('[dD]') then
+		self:mustbe('[oO]','[cC]','[tT]','[yY]','[pP]','[eE]')	-- there's probably a better way to optionally read a name...
 		self:spaces()
 		return self:strtil('>', 'doctype')
 	end
@@ -250,15 +251,15 @@ Parser.htmlnonclosing = {
 function Parser:tagstart()
 	-- closing tag...
 	if self:canbe('/') then
-		return self:tagend()
+		return self:parseassert(self:tagend(), "expected a tag end")
 	end
 	-- comment
 	if self:canbe('!') then
-		return self:comment()
+		return self:parseassert(self:comment(), "expected a comment")
 	end
 	-- xml header?
 	if self:canbe('%?') then
-		return self:xmlheader()
+		return self:parseassert(self:xmlheader(), "expected a html header")
 	end
 	
 	local t = {
@@ -275,14 +276,14 @@ function Parser:tagstart()
 		if self:canbe('/') then
 			self:mustbe('>')
 			t.child = nil	-- turn off our 'parse children' flag
-			return t
+			return self:parseassert(t, "expected a tag")
 		end
 		if self:canbe('>') then
 			-- if it is an automatically closing tag then don't look for children
 			if self.htmlnonclosing[t.tag:lower()] then
 				t.child = nil
 			end
-			return t
+			return self:parseassert(t, "expected a tag")
 		end
 		local attr = {
 			name = self:name();

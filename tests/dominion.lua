@@ -1,6 +1,6 @@
 -- TODO remove closing commas so JSON doesn't complain (because JavaScript sucks)
 require 'ext'
-require 'htmlparser.htmlparser'
+local htmlparser = require 'htmlparser.htmlparser'
 require 'socket'
 require 'htmlparser.common'
 require 'htmlparser.xpath'
@@ -13,7 +13,7 @@ local function processPage(page)
 	page = page:gsub(string.char(0xe2, 0x97, 0x89), 'P')
 	page = page:gsub(string.char(0xc2, 0xa0, 0x20), ' ')
 
-	local tree = htmlparser.new(page):parse()
+	local tree = htmlparser.parse(page)
 	local divEntryContent = unpack(htmlparser.xpath(tree, '//@class=entry-content'))
 	assert(divEntryContent)
 	for _,cardTable in ipairs(findchilds(divEntryContent, 'table')) do

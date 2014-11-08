@@ -1,4 +1,4 @@
-require 'htmlparser.htmlparser'
+local htmlparser = require 'htmlparser.htmlparser'
 require 'htmlparser.common'
 require 'ext'
 

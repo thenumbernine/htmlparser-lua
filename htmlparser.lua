@@ -451,7 +451,7 @@ function Parser:tagarray(parent)
 				-- then ch might not be a closer itself
 				-- and therefore might belong in array as a child of the parent tag
 				if closer and ch.type ~= 'closing' then
-					print('child tag is '..ch.tag..' child type is '..ch.type..' closer is '..closer)
+					--print('child tag is '..ch.tag..' child type is '..ch.type..' closer is '..closer)
 					table.insert(array, ch)
 				end
 				

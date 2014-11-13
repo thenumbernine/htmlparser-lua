@@ -212,8 +212,6 @@ function Parser:attrvalue()
 		local lasttoken = self.thistoken
 		if self:canbe("['\"]") then
 			quotetoken = lasttoken
-		else
-			table.insert(s, lasttoken)
 		end
 	end
 	while true do

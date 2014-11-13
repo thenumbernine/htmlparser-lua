@@ -91,8 +91,8 @@ function htmlparser.xpath(tree, path)
 	for i=1,#paths do
 		local path = paths[i]
 		local newnodes = table()
+		local findop = path.recurse and rfind or find
 		for _,node in ipairs(nodes) do
-			local findop = path.recurse and rfind or find
 			if node.child then
 				for _,ch in ipairs(findop(node.child, path)) do
 					table.insert(newnodes, ch)

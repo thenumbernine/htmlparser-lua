@@ -232,19 +232,25 @@ function Parser:attrvalue()
 	end
 end
 
+-- "void elements" from http://www.w3.org/TR/html-markup/syntax.html
 Parser.htmlnonclosing = {
-	br = true;
-	img = true;
-	meta = true;
-	frame = true;
 	area = true;
-	hr = true;
 	base = true;
+	br = true;
 	col = true;
-	link = true;
+	command = true;
+	embed = true;
+	hr = true;
+	img = true;
 	input = true;
-	option = true;
+	keygen = true;
+	link = true;
+	meta = true;
+	option = true;		-- not on the w3c list... why do I have it here?
 	param = true;
+	source = true;
+	track = true;
+	wbr = true;
 }
 
 -- already got <
@@ -440,6 +446,15 @@ function Parser:tagarray(parent)
 			--if closer then print('closing off multiple elements down to '..closer) end
 			assert(ch.type ~= 'closing' or not closer, "we shouldn't have a closing tag and a closer returned")
 			if ch.type == 'closing' or closer then
+
+				-- if closer is used to get into this block
+				-- then ch might not be a closer itself
+				-- and therefore might belong in array as a child of the parent tag
+				if closer and ch.type ~= 'closing' then
+					print('child tag is '..ch.tag..' child type is '..ch.type..' closer is '..closer)
+					table.insert(array, ch)
+				end
+				
 				closer = closer or ch.tag
 				local closingindex
 				for i=#self.nodestack,1,-1 do
@@ -452,9 +467,9 @@ function Parser:tagarray(parent)
 					end
 				end
 
-				--print('closing off down to '..closer..' and found index to be '..tostring(closingindex)..' of '..#nodestack)
+				--print('closing off '..parenttag..' down to '..closer..' and found index to be '..tostring(closingindex)..' of '..#self.nodestack)
 				--io.write('nodestack:')
-				--for _,v in ipairs(nodestack) do io.write('  '..v.tag) end
+				--for _,v in ipairs(self.nodestack) do io.write('  '..v.tag) end
 				--io.write('\n')
 				
 				if closingindex then

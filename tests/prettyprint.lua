@@ -49,8 +49,8 @@ else
 end
 
 -- [[
-require 'htmlparser'
-local tree = htmlparser.new(page):parse()
+local htmlparser = require 'htmlparser'
+local tree = htmlparser.parse(page)
 htmlparser.prettyprint(tree)
 --Parser.debugprint(tree)
 --]]

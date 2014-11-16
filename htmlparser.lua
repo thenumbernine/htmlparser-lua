@@ -508,13 +508,22 @@ end
 
 -- TODO - turn this into an instance method of the nodes' meta table
 -- pretty printer while I'm here
-function prettyprint(tree, tab, write)
-	write = write or io.write
-	tab = tab or 0
-	local tabstr = string.rep('\t',tab)
+--[[
+args:
+	tabdepth = (optional) how deep this node is in the tree.  default 0
+	tabchar = (optional) what character to use as the tab.  default '\t'
+	newlinechar = (optional) what char to use for newlines.  default '\n'
+	write = (optional) write function.  default io.write
+--]]
+function prettyprint(tree, args)
+	local write = args and args.write or io.write
+	local tabdepth = args and args.tabdepth or 0
+	local tabchar = args and args.tabchar or '\t'
+	local newlinechar = args and args.newlinechar or '\n'
+	local tabstr = string.rep(tabchar, tabdepth)
 	for i,n in ipairs(tree) do
 		if type(n) == 'string' then
-			write(tabstr..n..'\n')
+			write(tabstr..n..newlinechar)
 		elseif type(n) == 'table' then
 			if n.type == 'tag' then
 				write(tabstr..'<' .. n.tag)
@@ -524,24 +533,31 @@ function prettyprint(tree, tab, write)
 					end
 				end
 				if (not n.child or #n.child == 0) and n.tag:lower() ~= 'script' and n.tag:lower() ~= 'style' then
-					write('/>\n')
+					write('/>'..newlinechar)
 				else
-					write('>\n')
+					write('>'..newlinechar)
 					if n.child then
-						prettyprint(n.child, tab+1, write)
+						tabdepth = tabdepth + 1
+						prettyprint(n.child, {
+							-- rebuild all args here
+							write = write,
+							tabdepth = tabdepth,
+							tabchar = tabchar,
+							newlinechar = newlinechar,
+						}) 
 					end
-					write(tabstr..'</'..n.tag..'>\n')
+					write(tabstr..'</'..n.tag..'>'..newlinechar)
 				end
 			elseif n.type == 'cdata' then
-				write(tabstr..'<![CDATA[' .. n.str .. ']]>\n')
+				write(tabstr..'<![CDATA[' .. n.str .. ']]>'..newlinechar)
 			elseif n.type == 'comment' then
-				write(tabstr..'<!--' .. n.str .. '-->\n')
+				write(tabstr..'<!--' .. n.str .. '-->'..newlinechar)
 			elseif n.type == 'doctype' then
-				write(tabstr..'<!DOCTYPE '..n.str..'>\n')
+				write(tabstr..'<!DOCTYPE '..n.str..'>'..newlinechar)
 			elseif n.type == 'preprocessor' then
-				write(tabstr..'<!['..n.str..']>\n')
+				write(tabstr..'<!['..n.str..']>'..newlinechar)
 			elseif n.type == 'xmlheader' then
-				write(tabstr..'<?'..n.str..'?>\n')
+				write(tabstr..'<?'..n.str..'?>'..newlinechar)
 			else
 				error("found child index "..i.." unknown node type: "..tostring(n.type))
 			end
@@ -551,23 +567,23 @@ function prettyprint(tree, tab, write)
 	end
 end
 
-function debugprintnode(k, n, tab)
-	print(string.rep('\t',tab),k,'=>',n)
+function debugprintnode(k, n, tabdepth)
+	print(string.rep('\t',tabdepth),k,'=>',n)
 	if type(n) == 'table' then
-		debugprint(n, tab+1)
+		debugprint(n, tabdepth+1)
 	end
 end
 
-function debugprint(tree, tab)
-	tab = tab or 0
+function debugprint(tree, tabdepth)
+	tabdepth = tabdepth or 0
 	for k,n in pairs(tree) do
 		-- technically this'll miss any numbers that are set beyond the largest contiguous 1-based index...
 		if k ~= 'child' then
-			debugprintnode(k,n,tab)
+			debugprintnode(k,n,tabdepth)
 		end
 	end
 	if tree.child then
-		debugprintnode('child', tree.child, tab)
+		debugprintnode('child', tree.child, tabdepth)
 	end
 end
 

@@ -51,7 +51,7 @@ end
 -- [[
 local htmlparser = require 'htmlparser'
 local tree = htmlparser.parse(page)
-htmlparser.prettyprint(tree)
+htmlparser.prettyprint(tree, {tabchar='', newlinechar=''})
 --Parser.debugprint(tree)
 --]]
 

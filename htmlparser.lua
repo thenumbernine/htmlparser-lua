@@ -537,11 +537,10 @@ function prettyprint(tree, args)
 				else
 					write('>'..newlinechar)
 					if n.child then
-						tabdepth = tabdepth + 1
 						prettyprint(n.child, {
 							-- rebuild all args here
 							write = write,
-							tabdepth = tabdepth,
+							tabdepth = tabdepth + 1,
 							tabchar = tabchar,
 							newlinechar = newlinechar,
 						}) 

@@ -29,6 +29,8 @@ local function processPage(page)
 			--[[
 			removing cards that can't be chosen
 			--]]
+			
+			-- Dark Ages
 			if title == 'Ruins' then
 			elseif cardtype:sub(-8) == ' - Ruins' then
 			elseif title == 'Shelters' then
@@ -41,12 +43,21 @@ local function processPage(page)
 					cost='$5',
 					text=text,
 				}
+			elseif title == 'Spoils' then
 			elseif title == 'Madman' then
 			elseif title == 'Mercenary' then
-			elseif title == 'Spoils' then
+			-- Prosperity
 			elseif title == 'Platinum' then
 			elseif title == 'Colony' then
+			-- Alchemy
 			elseif title == 'Potion' then
+			-- Cornucopia:
+			elseif title == 'Bag of Gold' then
+			elseif title == 'Diadem' then
+			elseif title == 'Followers' then
+			elseif title == 'Princess' then
+			elseif title == 'Trusty Steed' then
+			-- all else:
 			else
 				if title ~= '' 
 				and cardtype ~= '' 

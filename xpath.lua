@@ -118,7 +118,7 @@ function htmlparser.xpath(tree, path)
 		for _,node in ipairs(nodes) do
 			if node.child then
 				for _,ch in ipairs(findop(node.child, path)) do
-					table.insert(newnodes, ch)
+					newnodes:insert(ch)
 				end
 			end
 		end

@@ -14,7 +14,7 @@ local function processPage(page)
 	page = page:gsub(string.char(0xc2, 0xa0, 0x20), ' ')
 
 	local tree = htmlparser.parse(page)
-	local divEntryContent = unpack(htmlparser.xpath(tree, '//@class=entry-content'))
+	local divEntryContent = htmlparser.xpath(tree, '//@class=entry-content'):unpack()
 	assert(divEntryContent)
 	for _,cardTable in ipairs(findchilds(divEntryContent, 'table')) do
 		local cardTBody = findchild(cardTable, 'tbody')

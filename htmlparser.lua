@@ -55,7 +55,10 @@ TODO
 - merge .child into the objects themselves
 --]]
 
-module(..., package.seeall)
+-- the one time I use 'module' ... 
+-- TODO get rid of dependencies on _ENV
+local htmlparser = setmetatable({}, {__index=_G})
+local _ENV = htmlparser
 
 Parser = {}
 Parser.__index = Parser
@@ -590,3 +593,5 @@ end
 function parse(data)
 	return new(data):parse()
 end
+
+return htmlparser

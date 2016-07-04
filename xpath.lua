@@ -20,8 +20,8 @@
 	THE SOFTWARE.
 --]]
 
-local htmlparser = require 'htmlparser.htmlparser'
-require 'htmlparser.common'
+local htmlparser = require 'htmlparser'
+local common = require 'htmlparser.common'
 local table = require 'ext.table'
 local string = require 'ext.string'	-- not applied to string's metatable
 
@@ -29,7 +29,7 @@ local wildcard = {}
 
 local function find(list, p)
 	if type(list) ~= 'table' then return {} end
-	local list = findnode(list, function(n)
+	local list = common.findnode(list, function(n)
 		if type(n) ~= 'table' then return false end
 		if p.tag and n.tag ~= p.tag then return false end
 		if p.attrs then
@@ -69,7 +69,7 @@ local function rfind(list, pathseg, accum)
 end
 
 -- incomplete, but xpath sucks 
-function htmlparser.xpath(tree, path)
+local function xpath(tree, path)
 	-- root is different than children... why is that?
 	tree = {child=tree}
 	
@@ -127,4 +127,4 @@ function htmlparser.xpath(tree, path)
 	return nodes
 end
 
-
+return xpath

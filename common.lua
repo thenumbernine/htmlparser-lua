@@ -22,7 +22,7 @@
 
 -- TODO -move to htmlparser and make instances of the tree nodes
 
-function findnode(list, callback)
+local function findnode(list, callback)
 	local res = {}
 	assert(type(list) == 'table')
 	for _,v in ipairs(list) do
@@ -33,7 +33,7 @@ function findnode(list, callback)
 	return res
 end
 
-function findtags(list, tagname, attrs)
+local function findtags(list, tagname, attrs)
 	return findnode(list, function(n)
 		if type(n) ~= 'table' then return false end
 		if n.tag ~= tagname then return false end
@@ -55,19 +55,19 @@ function findtags(list, tagname, attrs)
 	end)
 end
 
-function findtag(...)
+local function findtag(...)
 	return (findtags(...))[1]
 end
 
-function findchild(node, ...)
+local function findchild(node, ...)
 	return findtag(node.child, ...)
 end
 
-function findchilds(node, ...)
+local function findchilds(node, ...)
 	return findtags(node.child, ...)
 end
 
-function findattr(node, name)
+local function findattr(node, name)
 	if node.attrs then
 		for _,kv in ipairs(node.attrs) do
 			if kv.name == name then return kv.value end
@@ -75,10 +75,19 @@ function findattr(node, name)
 	end
 end
 
-function flattenText(n)
+local function flattenText(n)
 	if type(n) == 'string' then return n end
 	if n.tag == 'br' then return '.  ' end
 	if not n.child then return '' end
 	return table.map(n.child, function(ch) return flattenText(ch) end):concat()
 end
 
+return {
+	findnode = findnode,
+	findtags = findtags,
+	findtag = findtag,
+	findchild = findchild,
+	findchilds = findchilds,
+	findattr = findattr,
+	flattenText = flattenText,
+}

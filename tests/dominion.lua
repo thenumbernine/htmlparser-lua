@@ -1,9 +1,9 @@
 -- TODO remove closing commas so JSON doesn't complain (because JavaScript sucks)
 require 'ext'
-local htmlparser = require 'htmlparser.htmlparser'
-require 'socket'
-require 'htmlparser.common'
-require 'htmlparser.xpath'
+local htmlparser = require 'htmlparser'
+local socket = require 'socket'
+local common = require 'htmlparser.common'
+local xpath = require 'htmlparser.xpath'
 local http = require 'socket.http'
 local json = require 'dkjson'
 
@@ -14,12 +14,12 @@ local function processPage(page)
 	page = page:gsub(string.char(0xc2, 0xa0, 0x20), ' ')
 
 	local tree = htmlparser.parse(page)
-	local divEntryContent = htmlparser.xpath(tree, '//@class=entry-content'):unpack()
+	local divEntryContent = xpath(tree, '//@class=entry-content'):unpack()
 	assert(divEntryContent)
-	for _,cardTable in ipairs(findchilds(divEntryContent, 'table')) do
-		local cardTBody = findchild(cardTable, 'tbody')
-		for _,cardTR in ipairs(findchilds(cardTBody, 'tr')) do
-			local cardTDs = findchilds(cardTR, 'td')
+	for _,cardTable in ipairs(common.findchilds(divEntryContent, 'table')) do
+		local cardTBody = common.findchild(cardTable, 'tbody')
+		for _,cardTR in ipairs(common.findchilds(cardTBody, 'tr')) do
+			local cardTDs = common.findchilds(cardTR, 'td')
 			
 			local title = flattenText(cardTDs[1]):gsub([[&#8217;]], "'")
 			local cardtype = flattenText(cardTDs[2]):gsub([[&#8211;]], '-')

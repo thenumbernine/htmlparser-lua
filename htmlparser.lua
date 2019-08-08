@@ -112,7 +112,11 @@ function Parser:mustbe(...)
 end
 
 function Parser:spaces()
-	while self:canbe('%s') do end
+	local sp = ''
+	while self:canbe('%s') do 
+		sp = sp .. self.lasttoken
+	end
+	return sp
 end
 
 Parser.namepattern = '[%w_:%-]'
@@ -252,8 +256,11 @@ function Parser:tagstart()
 		child=true;	-- true means we should parse children (and replace with a table) 
 	}
 
-	self:spaces()
+	local space = self:spaces()
 	t.tag = self:name()
+	if not t.tag then
+		return '<'..space..self.lasttoken
+	end
 	if self.tagCaseInsensitive then t.tag = t.tag:lower() end
 
 	while true do

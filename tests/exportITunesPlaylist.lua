@@ -3,7 +3,7 @@ assert(#args > 0)
 local filename = args[1]
 local selectedPlaylist = args[2]
 
-require 'lfs'
+local file = require 'ext.file'
 require 'htmlparser'
 
 htmlparser.Parser.htmlnonclosing = {}	-- get rid of non-closing html parser symbols (i.e. interpret xml)
@@ -108,17 +108,17 @@ function reapITunesXmlFileList(tree)
 					print("failed to decode id "..sid)
 				end
 				
-				local file = assert(musicFiles[id])
-				table.insert(playlistFiles, file)
+				local fn = assert(musicFiles[id])
+				table.insert(playlistFiles, fn)
 			end
 		end
 	end
 	
 	if not selectedPlaylist then
 		for i=1,table.maxn(filelist) do
-			local file = filelist[i]
-			if file then
-				table.insert(playlistFiles, file)
+			local fn = filelist[i]
+			if fn then
+				table.insert(playlistFiles, fn)
 			end
 		end
 	end
@@ -132,28 +132,28 @@ function getITunesXmlFileList(filename)
 end
 
 local playlistFiles = getITunesXmlFileList(filename)
-for _,file in ipairs(playlistFiles) do
-	print(file)
-	if file:sub(-4) == '.mp3' then
+for _,fn in ipairs(playlistFiles) do
+	print(fn)
+	if fn:sub(-4) == '.mp3' then
 		print('...is mp3')
 	else
-		local mp3file = file:sub(1,-5)..'.mp3'
-		print('...mp3: '..tostring(lfs.attributes(mp3file) ~= nil))
+		local mp3file = fn:sub(1,-5)..'.mp3'
+		print('...mp3: '..tostring(file(mp3file):attr() ~= nil))
 		local mp3file2 = mp3file:gsub('iTunes Media', 'iTunes Music')
 		if mp3file ~= mp3file2 then
-			print('...mp3: '..tostring(lfs.attributes(mp3file2) ~= nil))
+			print('...mp3: '..tostring(file(mp3file2):attr() ~= nil))
 		end
 		local mp3file3 = mp3file:gsub('iTunes Music', 'iTunes Media')
 		if mp3file ~= mp3file3 then
-			print('...mp3: '..tostring(lfs.attributes(mp3file3) ~= nil))
+			print('...mp3: '..tostring(file(mp3file3):attr() ~= nil))
 		end
 		local mp3file4 = mp3file:gsub('/Volumes/BackupDrive1/', '/Users/twmoore/')
 		if mp3file4 ~= mp3file then
-			print('...mp3: '..tostring(lfs.attributes(mp3file4) ~= nil))
+			print('...mp3: '..tostring(file(mp3file4):attr() ~= nil))
 		end
 		local mp3file5 = mp3file:gsub('/Volumes/BackupDrive1/', '/Users/twmoore/'):gsub('iTunes Music', 'iTunes Media')
 		if mp3file5 ~= mp3file then
-			print('...mp3: '..tostring(lfs.attributes(mp3file5) ~= nil))
+			print('...mp3: '..tostring(file(mp3file5):attr() ~= nil))
 		end
 	end
 end

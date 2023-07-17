@@ -3,7 +3,7 @@ assert(#args > 0)
 local filename = args[1]
 local selectedPlaylist = args[2]
 
-local file = require 'ext.file'
+local path = require 'ext.path'
 require 'htmlparser'
 
 htmlparser.Parser.htmlnonclosing = {}	-- get rid of non-closing html parser symbols (i.e. interpret xml)
@@ -138,22 +138,22 @@ for _,fn in ipairs(playlistFiles) do
 		print('...is mp3')
 	else
 		local mp3file = fn:sub(1,-5)..'.mp3'
-		print('...mp3: '..tostring(file(mp3file):attr() ~= nil))
+		print('...mp3: '..tostring(path(mp3file):attr() ~= nil))
 		local mp3file2 = mp3file:gsub('iTunes Media', 'iTunes Music')
 		if mp3file ~= mp3file2 then
-			print('...mp3: '..tostring(file(mp3file2):attr() ~= nil))
+			print('...mp3: '..tostring(path(mp3file2):attr() ~= nil))
 		end
 		local mp3file3 = mp3file:gsub('iTunes Music', 'iTunes Media')
 		if mp3file ~= mp3file3 then
-			print('...mp3: '..tostring(file(mp3file3):attr() ~= nil))
+			print('...mp3: '..tostring(path(mp3file3):attr() ~= nil))
 		end
 		local mp3file4 = mp3file:gsub('/Volumes/BackupDrive1/', '/Users/twmoore/')
 		if mp3file4 ~= mp3file then
-			print('...mp3: '..tostring(file(mp3file4):attr() ~= nil))
+			print('...mp3: '..tostring(path(mp3file4):attr() ~= nil))
 		end
 		local mp3file5 = mp3file:gsub('/Volumes/BackupDrive1/', '/Users/twmoore/'):gsub('iTunes Music', 'iTunes Media')
 		if mp3file5 ~= mp3file then
-			print('...mp3: '..tostring(file(mp3file5):attr() ~= nil))
+			print('...mp3: '..tostring(path(mp3file5):attr() ~= nil))
 		end
 	end
 end

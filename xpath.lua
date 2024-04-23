@@ -52,9 +52,9 @@ local function xpath(tree, path)
 	tree = {child=tree}
 	
 	-- is root implied or required? what does its omission do?
-	assert(path:sub(1,1) == '/')
+	assert(path:sub(1,1) == '/', "expected /")
 	
-	local paths = string.split(path:sub(2),'/'):map(function(s) return {tag=s} end)
+	local paths = string.split(path:sub(2),'/'):mapi(function(s) return {tag=s} end)
 	-- // means 'recursive search under'
 	for i=#paths,1,-1 do
 		if paths[i].tag == '' then	

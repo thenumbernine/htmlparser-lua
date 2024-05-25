@@ -1,4 +1,5 @@
 -- TODO -move to htmlparser and make instances of the tree nodes
+local table = require 'ext.table'
 
 local function findnode(list, callback)
 	local res = {}
@@ -57,7 +58,7 @@ local function flattenText(n)
 	if type(n) == 'string' then return n end
 	if n.tag == 'br' then return '.  ' end
 	if not n.child then return '' end
-	return table.map(n.child, function(ch) return flattenText(ch) end):concat()
+	return table.mapi(n.child, function(ch) return flattenText(ch) end):concat()
 end
 
 return {

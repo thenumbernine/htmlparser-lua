@@ -517,7 +517,12 @@ function prettyprint(tree, args)
 				write(tabstr..'<' .. n.tag)
 				if n.attrs then
 					for _,a in ipairs(n.attrs) do
-						write(' '..a.name..'="'..a.value..'"')
+						if type(a.value) == 'boolean' then
+							assert(a.value == true)
+							write(' '..a.name)
+						else
+							write(' '..a.name..'="'..a.value..'"')
+						end
 					end
 				end
 				if (not n.child or #n.child == 0) and n.tag:lower() ~= 'script' and n.tag:lower() ~= 'style' then

@@ -2,4 +2,4 @@
 
 [![Donate via Stripe](https://img.shields.io/badge/Donate-Stripe-green.svg)](https://buy.stripe.com/00gbJZ0OdcNs9zi288)<br>
 
-depends on lua-ext: http://github.com/thenumbernine/lua-ext
+Depends on [lua-ext](https://github.com/thenumbernine/lua-ext)

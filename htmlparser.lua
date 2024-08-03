@@ -236,6 +236,12 @@ Parser.htmlnonclosing = {
 	wbr = true;
 }
 
+local NodeMT = {
+	__index = {
+		innerText = require 'htmlparser.common'.flattenText,
+	},
+}
+
 -- already got <
 function Parser:tagstart()
 	-- closing tag...
@@ -256,6 +262,7 @@ function Parser:tagstart()
 		child = true;	-- true means we should parse children (and replace with a table) 
 		attrmap = {},
 	}
+	setmetatable(t, NodeMT)
 
 	local space = self:spaces()
 	t.tag = self:name()
@@ -428,6 +435,7 @@ function Parser:tagarray(parent)
 	--print('... entering child set of type '..tostring(parenttag))
 	local array = setmetatable({}, {
 		__index = {
+			innerText = require 'htmlparser.common'.flattenText,
 			xpath = require 'htmlparser.xpath',
 		},
 	})

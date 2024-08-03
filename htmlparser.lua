@@ -252,8 +252,9 @@ function Parser:tagstart()
 	end
 	
 	local t = {
-		type='tag';
-		child=true;	-- true means we should parse children (and replace with a table) 
+		type = 'tag';
+		child = true;	-- true means we should parse children (and replace with a table) 
+		attrmap = {},
 	}
 
 	local space = self:spaces()
@@ -299,6 +300,7 @@ function Parser:tagstart()
 			--print('  reading attr value '..attr.value)
 			if not t.attrs then t.attrs = {} end
 			table.insert(t.attrs, attr)
+			t.attrmap[attr.name:lower()] = attr.value
 		end
 	end
 	
@@ -424,7 +426,11 @@ function Parser:tagarray(parent)
 	if parent then parenttag = parent.tag end
 	if parent then table.insert(self.nodestack, parent) end
 	--print('... entering child set of type '..tostring(parenttag))
-	local array = {}
+	local array = setmetatable({}, {
+		__index = {
+			xpath = require 'htmlparser.xpath',
+		},
+	})
 	while self.thistoken do
 		self:spaces()
 		if self:canbe('<') then

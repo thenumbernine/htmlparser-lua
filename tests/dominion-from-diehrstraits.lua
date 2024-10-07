@@ -1,4 +1,4 @@
-#!/usr/bin/env lua -lluarocks.require
+#!/usr/bin/env lua
 require 'ext'
 -- this has to match up with the require in xpath
 -- so TODO ... don't have xpath modify htmlparser 

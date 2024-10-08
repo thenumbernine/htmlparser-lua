@@ -83,6 +83,7 @@ local function processPage(page)
 			elseif title == 'Opulent Castle' then
 			elseif title == 'Sprawling Castle' then
 			elseif title == 'Grand Castle' then
+			elseif title == "King's Castle" then
 
 			-- Nocturne:
 			-- cost has a "*" and text has "(This is not in the supply.)"

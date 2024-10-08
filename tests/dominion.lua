@@ -23,27 +23,44 @@ local function processPage(page)
 		for _,cardTR in ipairs(findchilds(cardTBody, 'tr')) do
 			local cardTDs = findchilds(cardTR, 'td')
 
-			local title = flattenText(cardTDs[1]):gsub([[&#8217;]], "'")
-			local cardtype = flattenText(cardTDs[2]):gsub([[&#8211;]], '-')
-			local cost = flattenText(cardTDs[3])
-			local text = cardTDs[4]
+			local title = flattenText(cardTDs[1]):gsub([[&#8217;]], "'"):trim()
+			local cardtype = flattenText(cardTDs[2]):gsub([[&#8211;]], '-'):trim()
+			local cost = flattenText(cardTDs[3]):trim()
+			local text = (cardTDs[4]
 				and flattenText(cardTDs[4])
 					:gsub([[&#8211;]], '-')
 					:gsub([[&#8217;]], "'")
 					:gsub([[&#8212;]], ' -- ')
 					:gsub([[&#8230]], ':')
-				or ''
+				or ''):trim()
 
 			--[[
 			removing cards that can't be chosen
 			--]]
 
+			-- Alchemy:
+			if title == 'Potion' then
+
+			-- Prosperity:
+			elseif title == 'Platinum' then
+			elseif title == 'Colony' then
+
+			-- Cornucopia:
+			elseif title == 'Bag of Gold' then
+			elseif title == 'Diadem' then
+			elseif title == 'Followers' then
+			elseif title == 'Princess' then
+			elseif title == 'Trusty Steed' then
+
+
 			-- Dark Ages
-			if title == 'Ruins' then
-			elseif cardtype:sub(-8) == ' - Ruins' then
+			-- 'Shelters' is a separate thing - replace all of them with a single 'Shelters'
+			-- replace all 'Knights' with the single Knights
+			elseif title == 'Ruins' then
+			elseif cardtype:sub(-8) == '- Ruins' then
 			elseif title == 'Shelters' then
-			elseif cardtype:sub(-10) == ' - Shelter' then
-			elseif cardtype:sub(-9) == ' - Knight' then
+			elseif cardtype:sub(-10) == '- Shelter' then
+			elseif cardtype:sub(-9) == '- Knight' then
 			elseif title == 'Knights' then
 				cards:insert{
 					name=title,
@@ -54,24 +71,39 @@ local function processPage(page)
 			elseif title == 'Spoils' then
 			elseif title == 'Madman' then
 			elseif title == 'Mercenary' then
-			-- Prosperity
-			elseif title == 'Platinum' then
-			elseif title == 'Colony' then
-			-- Alchemy
-			elseif title == 'Potion' then
-			-- Cornucopia:
-			elseif title == 'Bag of Gold' then
-			elseif title == 'Diadem' then
-			elseif title == 'Followers' then
-			elseif title == 'Princess' then
-			elseif title == 'Trusty Steed' then
+
+			-- Empires:
+			-- add Castle, but don't add Castle cards: Humble Castle, Crumbling Castle, Small Castle, Haunted Castle, Opulent Castle, Sprawling Castle, Grand Castle, King's Castle
+			-- same with Events?
+			-- same with Landmarks?
+			elseif title == 'Humble Castle' then
+			elseif title == 'Crumbling Castle' then
+			elseif title == 'Small Castle' then
+			elseif title == 'Haunted Castle' then
+			elseif title == 'Opulent Castle' then
+			elseif title == 'Sprawling Castle' then
+			elseif title == 'Grand Castle' then
+
+			-- Nocturne:
+			-- cost has a "*" and text has "(This is not in the supply.)"
+			-- ex: Imp, Bat, Wish, Will O' Wisp, Imp, Ghost
+			elseif title == 'Imp' then
+			elseif title == 'Bat' then
+			elseif title == 'Wish' then
+			elseif title == "Will-O'-Wisp" then
+			elseif title == "Ghost" then
 			-- all else:
 			else
+				--[[
 				if title ~= ''
 				and cardtype ~= ''
 				and cost ~= ''
 				and text ~= ''
 				then
+				--]] do
+					if cards:find(nil, function(card) return card.name == title end) then
+						io.stderr:write('WARNING!!! DUPLICATE CARD: ', title, '\n')
+					end
 					cards:insert{
 						name=title,
 						type=cardtype,
@@ -112,9 +144,12 @@ for _,setinfo in ipairs(setinfos) do
 
 	local cards = processPage(page)
 	sets:insert{
-		name=setname:sub(1,1):upper()..setname:sub(2),
-		cards=cards,
+		name = setname:sub(1,1):upper()..setname:sub(2),
+		cards = cards,
 	}
 end
 
-print('decks = '..json.encode(sets, {indent=true}))
+print('decks = '..json.encode(sets, {
+	indent = true,
+	keyorder = {'name', 'type', 'cost', 'text', 'cards'},
+}))

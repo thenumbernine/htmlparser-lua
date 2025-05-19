@@ -1,0 +1,17 @@
+name = "htmlparser"
+files = {
+	["LICENSE"] = "htmlparser/LICENSE",
+	["README.md"] = "htmlparser/README.md",
+	["common.lua"] = "htmlparser/common.lua",
+	["htmlparser-dev-1.rockspec"] = "htmlparser/htmlparser-dev-1.rockspec",
+	["htmlparser.lua"] = "htmlparser/htmlparser.lua",
+	["tests/dominion-from-diehrstraits.lua"] = "htmlparser/tests/dominion-from-diehrstraits.lua",
+	["tests/dominion.lua"] = "htmlparser/tests/dominion.lua",
+	["tests/exportITunesPlaylist.lua"] = "htmlparser/tests/exportITunesPlaylist.lua",
+	["tests/prettyprint.lua"] = "htmlparser/tests/prettyprint.lua",
+	["tests/yqlkey.lua"] = "htmlparser/tests/yqlkey.lua",
+	["xpath.lua"] = "htmlparser/xpath.lua",
+}
+deps = {
+	"ext",
+}
